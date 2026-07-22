@@ -10,10 +10,13 @@ export class StudioModule {
     // 交互相关初始化
     this.pointers = new Map();
     this.isSpaceDown = false;
+    this.dirty = true;
     this.dragState = { active: false, type: null, startX: 0, startY: 0, startCamX: 0, startCamY: 0, startCrop: null, activeImageIndex: -1, lastDist: 0, lastCenter: null };
 
     this.bindEvents();
   }
+
+  markDirty() { this.dirty = true; }
 
   // --- 视图渲染方法 ---
 
@@ -21,6 +24,7 @@ export class StudioModule {
     const dpr = Math.min(window.devicePixelRatio || 1, 2);
     this.canvas.width = this.canvas.clientWidth * dpr;
     this.canvas.height = this.canvas.clientHeight * dpr;
+    this.markDirty();
   }
 
   drawGrid(w, h) {
@@ -190,6 +194,8 @@ export class StudioModule {
 
   renderFrame() {
     if (this.app.state.mode === UI_MODE.STEP1) return;
+    if (!this.dirty) return;
+    this.dirty = false;
     const dpr = Math.min(window.devicePixelRatio || 1, 2);
     const cw = this.canvas.width; const ch = this.canvas.height;
     const cam = this.app.state.camera;
@@ -234,6 +240,7 @@ export class StudioModule {
       this.pointers.set(e.pointerId, { x: e.clientX, y: e.clientY });
       if (this.pointers.size === 1) this.handleSingleMove(e);
       else if (this.pointers.size === 2) this.handleDoubleMove();
+      this.markDirty();
     });
 
     const upHandler = e => {
@@ -265,6 +272,7 @@ export class StudioModule {
       cam.x = pt.x - (e.clientX - this.canvas.clientWidth / 2) / newZoom;
       cam.y = pt.y - (e.clientY - this.canvas.clientHeight / 2) / newZoom;
       cam.zoom = newZoom;
+      this.markDirty();
     }, { passive: false });
   }
 

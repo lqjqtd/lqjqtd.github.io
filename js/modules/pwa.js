@@ -15,6 +15,34 @@ export class PWAModule {
     }
 
     this.initSW();
+    this.initInstallPrompt();
+  }
+
+  initInstallPrompt() {
+    this.deferredPrompt = null;
+    const btn = document.getElementById('btn-install');
+    if (!btn) return;
+
+    window.addEventListener('beforeinstallprompt', (e) => {
+      e.preventDefault();
+      this.deferredPrompt = e;
+      btn.classList.remove('hidden');
+    });
+
+    btn.addEventListener('click', async () => {
+      if (!this.deferredPrompt) return;
+      this.deferredPrompt.prompt();
+      const choice = await this.deferredPrompt.userChoice;
+      if (choice.outcome === 'accepted') {
+        btn.classList.add('hidden');
+      }
+      this.deferredPrompt = null;
+    });
+
+    window.addEventListener('appinstalled', () => {
+      btn.classList.add('hidden');
+      this.deferredPrompt = null;
+    });
   }
 
   updateManifest() {

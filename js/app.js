@@ -48,6 +48,7 @@ class AppController {
     document.getElementById('ui-step2-seam').classList.toggle('hidden', mode !== UI_MODE.STEP2_SEAM);
     document.getElementById('ui-step3-crop').classList.toggle('hidden', mode !== UI_MODE.STEP3_CROP);
     this.studio.resize();
+    this.studio.markDirty();
     if (push) window.history.pushState({ mode }, '');
   }
 
@@ -82,6 +83,7 @@ class AppController {
     this.state.camera.zoom = Math.max(0.05, Math.min(10, Math.min(scaleX, scaleY)));
     this.state.camera.x = this.state.totalBounds.w / 2;
     this.state.camera.y = this.state.totalBounds.h / 2;
+    this.studio.markDirty();
   }
 
   startSeamAdjust(index) {
@@ -105,6 +107,7 @@ class AppController {
       tZoom = Math.min(ch / this.state.baseDimension, cw / (img1.logicalW + img2.logicalW) * 2);
     }
     this.state.camera.x = seamX; this.state.camera.y = seamY; this.state.camera.zoom = tZoom;
+    this.studio.markDirty();
   }
 
   centerCropBox() {
@@ -122,6 +125,7 @@ class AppController {
     const scaleX = (canvas.clientWidth - padding) / box.w;
     const scaleY = (canvas.clientHeight - padding) / box.h;
     this.state.camera.zoom = Math.min(2.0, Math.min(scaleX, scaleY));
+    this.studio.markDirty();
   }
 
   bindUIEvents() {
@@ -228,10 +232,21 @@ class AppController {
 
       this.studio.renderClippedImages(eCtx, this.state.cropBox);
 
-      exportCanvas.toBlob(blob => {
+      exportCanvas.toBlob(async blob => {
+        const filename = `stitched_image_${Date.now()}.png`;
+        const file = new File([blob], filename, { type: 'image/png' });
+        if (navigator.canShare && navigator.canShare({ files: [file] })) {
+          try {
+            await navigator.share({ files: [file], title: this.i18n.t('title') });
+            this.showToast(this.i18n.t("downloaded"));
+            return;
+          } catch (e) {
+            if (e.name === 'AbortError') return;
+          }
+        }
         const url = URL.createObjectURL(blob);
         const a = document.createElement('a');
-        a.href = url; a.download = `stitched_image_${Date.now()}.png`; a.click();
+        a.href = url; a.download = filename; a.click();
         URL.revokeObjectURL(url); this.showToast(this.i18n.t("downloaded"));
       }, 'image/png', 1.0);
     };

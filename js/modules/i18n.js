@@ -26,6 +26,7 @@ export class I18nModule {
         "delete": "删除",
         "heicNotSupported": "不支持 HEIC/HEIF 格式，请在相机设置中切换为 JPEG",
         "loadFailed": "部分图片加载失败，已跳过",
+        "install": "添加到桌面",
         "desc": "极简纯前端长图拼接应用，支持离线本地使用"
       },
       "en": {
@@ -52,6 +53,7 @@ export class I18nModule {
         "delete": "Delete",
         "heicNotSupported": "HEIC/HEIF not supported. Please switch camera to JPEG.",
         "loadFailed": "Some images failed to load and were skipped.",
+        "install": "Add to Home Screen",
         "desc": "Simple front-end long image stitcher, PWA offline ready."
       }
     };
