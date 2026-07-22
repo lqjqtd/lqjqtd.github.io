@@ -25,6 +25,10 @@ class AppController {
     window.addEventListener('resize', () => { this.studio.resize(); this.fitCamera(); });
     window.addEventListener('offline', () => this.showToast(this.i18n.t("offline")));
     window.addEventListener('online', () => this.showToast(this.i18n.t("online")));
+
+    // 安卓返回键接管：初始化历史栈并监听 popstate
+    window.history.replaceState({ mode: UI_MODE.STEP1 }, '');
+    window.addEventListener('popstate', (e) => this.handlePopState(e));
   }
 
   showToast(msg) {
@@ -33,7 +37,8 @@ class AppController {
     setTimeout(() => toast.style.opacity = '0', 2000);
   }
 
-  setUIMode(mode) {
+  setUIMode(mode, push = true) {
+    if (this.state.mode === mode) return;
     this.state.mode = mode;
     document.getElementById('step-1').className = mode === UI_MODE.STEP1 ? 'step-container active-step p-4 sm:p-6 w-full h-full flex flex-col' : 'step-container hidden-step';
     document.getElementById('step-2-3').className = mode !== UI_MODE.STEP1 ? 'step-container active-step bg-gray-100 dark:bg-gray-950' : 'step-container hidden-step';
@@ -43,6 +48,30 @@ class AppController {
     document.getElementById('ui-step2-seam').classList.toggle('hidden', mode !== UI_MODE.STEP2_SEAM);
     document.getElementById('ui-step3-crop').classList.toggle('hidden', mode !== UI_MODE.STEP3_CROP);
     this.studio.resize();
+    if (push) window.history.pushState({ mode }, '');
+  }
+
+  handlePopState(e) {
+    const targetMode = (e.state && e.state.mode) || UI_MODE.STEP1;
+    const currentMode = this.state.mode;
+    if (targetMode === currentMode) return;
+
+    // 模拟对应"返回"按钮的清理逻辑
+    if (currentMode === UI_MODE.STEP2_SEAM && targetMode === UI_MODE.STEP2_GLOBAL) {
+      this.state.tempOverlapDeltaPrev = 0;
+      this.state.tempOverlapDeltaNext = 0;
+      this.state.updateLayoutPositions();
+      this.fitCamera();
+      this.setUIMode(UI_MODE.STEP2_GLOBAL, false);
+    } else if (currentMode === UI_MODE.STEP2_GLOBAL && targetMode === UI_MODE.STEP1) {
+      this.setUIMode(UI_MODE.STEP1, false);
+    } else if (currentMode === UI_MODE.STEP3_CROP && targetMode === UI_MODE.STEP2_GLOBAL) {
+      this.state.updateLayoutPositions();
+      this.fitCamera();
+      this.setUIMode(UI_MODE.STEP2_GLOBAL, false);
+    } else {
+      this.setUIMode(targetMode, false);
+    }
   }
 
   fitCamera() {
@@ -116,7 +145,10 @@ class AppController {
     });
 
     document.getElementById('btn-clear-all').onclick = () => {
-      this.state.images.forEach(img => URL.revokeObjectURL(img.url));
+      this.state.images.forEach(img => {
+        URL.revokeObjectURL(img.url);
+        if (img.thumbUrl && img.thumbUrl !== img.url) URL.revokeObjectURL(img.thumbUrl);
+      });
       this.state.images = [];
       this.loader.renderThumbnails();
       fileInput.value = '';
@@ -177,7 +209,9 @@ class AppController {
       const exportCanvas = document.createElement('canvas');
       let outW = this.state.cropBox.w; let outH = this.state.cropBox.h;
 
-      const maxDim = 16384; let scale = 1;
+      const mem = navigator.deviceMemory || 4;
+      const maxDim = mem <= 4 ? 4096 : mem <= 8 ? 8192 : 16384;
+      let scale = 1;
       if (outW > maxDim || outH > maxDim) {
         scale = maxDim / Math.max(outW, outH);
         outW *= scale; outH *= scale;
@@ -188,7 +222,7 @@ class AppController {
       const eCtx = exportCanvas.getContext('2d');
 
       eCtx.imageSmoothingEnabled = true;
-      eCtx.imageSmoothingQuality = 'high';
+      eCtx.imageSmoothingQuality = 'medium';
 
       eCtx.scale(scale, scale); eCtx.translate(-this.state.cropBox.x, -this.state.cropBox.y);
 

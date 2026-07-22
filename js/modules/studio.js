@@ -18,7 +18,7 @@ export class StudioModule {
   // --- 视图渲染方法 ---
 
   resize() {
-    const dpr = window.devicePixelRatio || 1;
+    const dpr = Math.min(window.devicePixelRatio || 1, 2);
     this.canvas.width = this.canvas.clientWidth * dpr;
     this.canvas.height = this.canvas.clientHeight * dpr;
   }
@@ -190,7 +190,7 @@ export class StudioModule {
 
   renderFrame() {
     if (this.app.state.mode === UI_MODE.STEP1) return;
-    const dpr = window.devicePixelRatio || 1;
+    const dpr = Math.min(window.devicePixelRatio || 1, 2);
     const cw = this.canvas.width; const ch = this.canvas.height;
     const cam = this.app.state.camera;
 

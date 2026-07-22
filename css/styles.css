@@ -6,6 +6,7 @@ body {
   overscroll-behavior: none;
   width: 100vw;
   height: 100vh;
+  height: 100dvh;
   margin: 0;
   padding: 0;
 }
@@ -28,6 +29,16 @@ body {
   display: flex;
   flex-direction: column;
   transition: opacity 0.3s ease;
+}
+
+#step-1 {
+  padding-top: calc(1rem + env(safe-area-inset-top));
+}
+
+@media (min-width: 640px) {
+  #step-1 {
+    padding-top: calc(1.5rem + env(safe-area-inset-top));
+  }
 }
 
 .hidden-step {

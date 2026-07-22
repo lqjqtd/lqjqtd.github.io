@@ -8,28 +8,70 @@ export class LoaderModule {
   }
 
   handleFiles(files) {
-    const validFiles = Array.from(files).filter(file => file.type.startsWith('image/'));
+    const validFiles = Array.from(files).filter(file => {
+      if (!file.type.startsWith('image/')) return false;
+      if (file.type === 'image/heic' || file.type === 'image/heif') {
+        this.app.showToast(this.app.i18n.t('heicNotSupported'));
+        return false;
+      }
+      return true;
+    });
     if (validFiles.length === 0) return;
 
-    let loadedCount = 0;
-    validFiles.forEach(file => {
-      const url = URL.createObjectURL(file);
-      const img = new Image();
-      img.onload = () => {
-        this.app.state.images.push({
-          id: Math.random().toString(36).substr(2, 9),
-          file, url, imgEl: img,
-          naturalW: img.naturalWidth, naturalH: img.naturalHeight
-        });
-        loadedCount++;
-        if (loadedCount === validFiles.length) this.renderThumbnails();
-      };
-      img.src = url;
+    Promise.all(validFiles.map(file => this.loadImage(file))).then(results => {
+      results.forEach(r => { if (r) this.app.state.images.push(r); });
+      this.renderThumbnails();
     });
   }
 
+  async loadImage(file) {
+    const url = URL.createObjectURL(file);
+    try {
+      const img = await new Promise((resolve, reject) => {
+        const im = new Image();
+        im.onload = () => resolve(im);
+        im.onerror = () => reject(new Error('image load failed'));
+        im.src = url;
+      });
+      const thumbUrl = await this.generateThumbnail(file);
+      return {
+        id: Math.random().toString(36).slice(2, 11),
+        file, url, imgEl: img,
+        thumbUrl: thumbUrl || url,
+        naturalW: img.naturalWidth, naturalH: img.naturalHeight
+      };
+    } catch (e) {
+      URL.revokeObjectURL(url);
+      this.app.showToast(this.app.i18n.t('loadFailed'));
+      return null;
+    }
+  }
+
+  async generateThumbnail(file) {
+    if (typeof createImageBitmap !== 'function') return null;
+    try {
+      const bitmap = await createImageBitmap(file, {
+        resizeWidth: 320,
+        resizeHeight: 320,
+        resizeQuality: 'low',
+        imageOrientation: 'from-image'
+      });
+      const canvas = document.createElement('canvas');
+      canvas.width = bitmap.width;
+      canvas.height = bitmap.height;
+      canvas.getContext('2d').drawImage(bitmap, 0, 0);
+      bitmap.close();
+      const blob = await new Promise(r => canvas.toBlob(r, 'image/jpeg', 0.7));
+      return blob ? URL.createObjectURL(blob) : null;
+    } catch (e) {
+      return null;
+    }
+  }
+
   removeImage(index) {
-    URL.revokeObjectURL(this.app.state.images[index].url);
+    const img = this.app.state.images[index];
+    URL.revokeObjectURL(img.url);
+    if (img.thumbUrl && img.thumbUrl !== img.url) URL.revokeObjectURL(img.thumbUrl);
     this.app.state.images.splice(index, 1);
     this.renderThumbnails();
   }
@@ -83,8 +125,8 @@ export class LoaderModule {
       div.dataset.index = index;
 
       div.innerHTML = `
-        <img src="${imgObj.url}" class="thumbnail-img">
-        <div class="delete-btn" title="${this.app.i18n.t('delete')}">
+        <img src="${imgObj.thumbUrl || imgObj.url}" class="thumbnail-img" loading="lazy" alt="">
+        <div class="delete-btn" title="${this.app.i18n.t('delete')}" role="button" aria-label="${this.app.i18n.t('delete')}">
             <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
         </div>
       `;

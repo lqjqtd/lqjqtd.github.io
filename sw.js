@@ -1,4 +1,4 @@
-const VERSION = 'BUILD_TIME_PLACEHOLDER';
+const VERSION = '20260723024719';
 const CACHE_NAME = 'site-cache-v' + VERSION;
 
 // 核心资产：包含你的模块化 JS 文件
@@ -26,8 +26,7 @@ self.addEventListener('install', (event) => {
   );
 });
 
-// 2. 激活阶段：清理旧缓存
-self.addEventListener('activate', (event) => {
+// 2. 激活阶段：清理旧缓�?self.addEventListener('activate', (event) => {
   event.waitUntil(
     caches.keys().then((keys) => {
       return Promise.all(
@@ -37,15 +36,14 @@ self.addEventListener('activate', (event) => {
   );
 });
 
-// 3. 运行时策略：适配 SPA 的 StaleWhileRevalidate
+// 3. 运行时策略：适配 SPA �?StaleWhileRevalidate
 self.addEventListener('fetch', (event) => {
   if (event.request.method !== 'GET') return;
   if (!event.request.url.startsWith(self.location.origin)) return;
 
   event.respondWith(
     caches.open(CACHE_NAME).then(async (cache) => {
-      // 1. 尝试从缓存获取
-      const cachedResponse = await cache.match(event.request);
+      // 1. 尝试从缓存获�?      const cachedResponse = await cache.match(event.request);
 
       // 2. 后台更新逻辑
       const fetchPromise = fetch(event.request).then((networkResponse) => {
@@ -55,13 +53,12 @@ self.addEventListener('fetch', (event) => {
         return networkResponse;
       }).catch(() => { });
 
-      // 3. 如果是导航请求且缓存中没找到，回退到 index.html
+      // 3. 如果是导航请求且缓存中没找到，回退�?index.html
       if (event.request.mode === 'navigate' && !cachedResponse) {
         return cache.match('./index.html').then(res => res || fetchPromise);
       }
 
-      // 4. 返回缓存或等待网络结果
-      return cachedResponse || fetchPromise;
+      // 4. 返回缓存或等待网络结�?      return cachedResponse || fetchPromise;
     })
   );
 });

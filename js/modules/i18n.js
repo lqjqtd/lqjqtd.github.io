@@ -24,6 +24,8 @@ export class I18nModule {
         "tooLarge": "图片过大，已自动缩放以防崩溃",
         "downloaded": "下载完成",
         "delete": "删除",
+        "heicNotSupported": "不支持 HEIC/HEIF 格式，请在相机设置中切换为 JPEG",
+        "loadFailed": "部分图片加载失败，已跳过",
         "desc": "极简纯前端长图拼接应用，支持离线本地使用"
       },
       "en": {
@@ -48,6 +50,8 @@ export class I18nModule {
         "tooLarge": "Image too large, auto-scaled to prevent crash.",
         "downloaded": "Downloaded",
         "delete": "Delete",
+        "heicNotSupported": "HEIC/HEIF not supported. Please switch camera to JPEG.",
+        "loadFailed": "Some images failed to load and were skipped.",
         "desc": "Simple front-end long image stitcher, PWA offline ready."
       }
     };
