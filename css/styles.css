@@ -159,10 +159,11 @@ body {
 
 .btn {
   width: 6.25em;
-  padding: 0.35rem 1rem;
+  padding: 4px 12px;
   border-radius: 999px;
   font-weight: 500;
-  font-size: 0.85rem;
+  font-size: 13px;
+  line-height: 1.2;
   transition: all 0.2s;
   cursor: pointer;
   white-space: nowrap;
