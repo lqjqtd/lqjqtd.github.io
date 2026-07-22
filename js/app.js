@@ -31,10 +31,12 @@ class AppController {
     window.addEventListener('popstate', (e) => this.handlePopState(e));
   }
 
-  showToast(msg) {
+  showToast(msg, duration = 2000) {
     const toast = document.getElementById('toast');
     toast.textContent = msg; toast.style.opacity = '1';
-    setTimeout(() => toast.style.opacity = '0', 2000);
+    toast.style.cursor = ''; toast.onclick = null;
+    clearTimeout(this._toastTimer);
+    this._toastTimer = setTimeout(() => toast.style.opacity = '0', duration);
   }
 
   setUIMode(mode, push = true) {

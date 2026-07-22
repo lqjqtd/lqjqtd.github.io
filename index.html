@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="zh-CN">
 
 <head>
@@ -9,9 +9,25 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <title data-i18n="title">简单拼图</title>
   <meta name="keywords" content="长图拼接,台词拼接,拼图工具,图片拼接,长图生成,离线应用,PWA,Image Stitcher,Long Image,Photo Joiner">
-  <link rel="icon" type="image/svg+xml" href="./favicon.svg">
+  <link rel="icon" type="image/svg+xml" href="./favicon.svg?v=20260723035849">
   <script src="https://cdn.tailwindcss.com"></script>
-  <link rel="stylesheet" href="./css/styles.css">
+  <link rel="stylesheet" href="./css/styles.css?v=20260723035849">
+  <script>
+    const APP_VERSION = '20260723035849';
+    const vq = '?v=' + APP_VERSION;
+    const im = document.createElement('script');
+    im.type = 'importmap';
+    im.textContent = JSON.stringify({
+      imports: {
+        './modules/state.js': './js/modules/state.js' + vq,
+        './modules/i18n.js': './js/modules/i18n.js' + vq,
+        './modules/pwa.js': './js/modules/pwa.js' + vq,
+        './modules/loader.js': './js/modules/loader.js' + vq,
+        './modules/studio.js': './js/modules/studio.js' + vq
+      }
+    });
+    document.head.appendChild(im);
+  </script>
 </head>
 
 <body class="bg-gray-50 text-gray-900 dark:bg-[#121212] dark:text-white">
@@ -80,7 +96,7 @@
 
   <div id="toast" class="toast"></div>
 
-  <script type="module" src="./js/app.js"></script>
+  <script type="module" src="./js/app.js?v=20260723035849"></script>
 </body>
 
 </html>

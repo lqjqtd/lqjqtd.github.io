@@ -1,17 +1,26 @@
-const VERSION = '20260723032024';
+﻿const VERSION = '20260723035849';
 const CACHE_NAME = 'site-cache-v' + VERSION;
 
 // 核心资产：包含你的模块化 JS 文件
+const V = '?v=' + VERSION;
 const ASSETS = [
   './',
-  './css/styles.css',
-  './js/app.js',
-  './js/modules/state.js',
-  './js/modules/i18n.js',
-  './js/modules/pwa.js',
-  './js/modules/loader.js',
-  './js/modules/studio.js'
+  './css/styles.css' + V,
+  './js/app.js' + V,
+  './js/modules/state.js' + V,
+  './js/modules/i18n.js' + V,
+  './js/modules/pwa.js' + V,
+  './js/modules/loader.js' + V,
+  './js/modules/studio.js' + V,
+  './favicon.svg' + V
 ];
+
+// 0. 接收跳过等待消息
+self.addEventListener('message', (event) => {
+  if (event.data && event.data.type === 'SKIP_WAITING') {
+    self.skipWaiting();
+  }
+});
 
 // 1. 安装阶段
 self.addEventListener('install', (event) => {
@@ -26,7 +35,8 @@ self.addEventListener('install', (event) => {
   );
 });
 
-// 2. 激活阶段：清理旧缓�?self.addEventListener('activate', (event) => {
+// 2. 激活阶段：清理旧缓存
+self.addEventListener('activate', (event) => {
   event.waitUntil(
     caches.keys().then((keys) => {
       return Promise.all(
@@ -36,14 +46,15 @@ self.addEventListener('install', (event) => {
   );
 });
 
-// 3. 运行时策略：适配 SPA �?StaleWhileRevalidate
+// 3. 运行时策略：适配 SPA 的 StaleWhileRevalidate
 self.addEventListener('fetch', (event) => {
   if (event.request.method !== 'GET') return;
   if (!event.request.url.startsWith(self.location.origin)) return;
 
   event.respondWith(
     caches.open(CACHE_NAME).then(async (cache) => {
-      // 1. 尝试从缓存获�?      const cachedResponse = await cache.match(event.request);
+      // 1. 尝试从缓存获取
+      const cachedResponse = await cache.match(event.request);
 
       // 2. 后台更新逻辑
       const fetchPromise = fetch(event.request).then((networkResponse) => {
@@ -53,12 +64,13 @@ self.addEventListener('fetch', (event) => {
         return networkResponse;
       }).catch(() => { });
 
-      // 3. 如果是导航请求且缓存中没找到，回退�?index.html
+      // 3. 如果是导航请求且缓存中没找到，回退到 index.html
       if (event.request.mode === 'navigate' && !cachedResponse) {
         return cache.match('./index.html').then(res => res || fetchPromise);
       }
 
-      // 4. 返回缓存或等待网络结�?      return cachedResponse || fetchPromise;
+      // 4. 返回缓存或等待网络结果
+      return cachedResponse || fetchPromise;
     })
   );
 });

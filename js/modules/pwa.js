@@ -82,7 +82,25 @@ export class PWAModule {
 
   initSW() {
     if ('serviceWorker' in navigator && location.protocol.startsWith('http')) {
-      navigator.serviceWorker.register('./sw.js').catch(err => {
+      navigator.serviceWorker.register('./sw.js').then(reg => {
+        reg.addEventListener('updatefound', () => {
+          const newSW = reg.installing;
+          newSW.addEventListener('statechange', () => {
+            if (newSW.state === 'installed' && navigator.serviceWorker.controller) {
+              this.app.showToast(this.app.i18n.t('updateAvailable'), 6000);
+              const toast = document.getElementById('toast');
+              if (toast) {
+                toast.style.cursor = 'pointer';
+                toast.onclick = () => {
+                  newSW.postMessage({ type: 'SKIP_WAITING' });
+                  location.reload();
+                };
+              }
+            }
+          });
+        });
+        setInterval(() => reg.update(), 60 * 60 * 1000);
+      }).catch(err => {
         console.log('SW registration failed:', err);
       });
     }
