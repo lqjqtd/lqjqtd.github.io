@@ -254,6 +254,20 @@ class AppController {
           return;
         }
 
+        if (mode === 'copy') {
+          try {
+            if (navigator.clipboard && navigator.clipboard.write) {
+              await navigator.clipboard.write([new ClipboardItem({ 'image/png': blob })]);
+              this.showToast(this.i18n.t("copied"));
+            } else {
+              this.showToast(this.i18n.t("copyNotSupported"));
+            }
+          } catch (e) {
+            this.showToast(this.i18n.t("copyFailed"));
+          }
+          return;
+        }
+
         const url = URL.createObjectURL(blob);
         const a = document.createElement('a');
         a.href = url; a.download = filename; a.click();
@@ -261,8 +275,20 @@ class AppController {
       }, 'image/png', 1.0);
     };
 
+    const canShare = !!(navigator.canShare && navigator.canShare({ files: [new File([new Blob()], 'test.png', { type: 'image/png' })] }));
+    const shareBtn = document.getElementById('btn-export-share');
+    const copyBtn = document.getElementById('btn-export-copy');
+    if (canShare) {
+      shareBtn.classList.remove('hidden');
+      copyBtn.classList.add('hidden');
+    } else {
+      shareBtn.classList.add('hidden');
+      copyBtn.classList.remove('hidden');
+    }
+
     document.getElementById('btn-crop-save').onclick = () => doExport('save');
     document.getElementById('btn-export-share').onclick = () => doExport('share');
+    document.getElementById('btn-export-copy').onclick = () => doExport('copy');
     document.getElementById('btn-export-save').onclick = () => doExport('save');
 
     const menuToggle = document.getElementById('btn-export-menu-toggle');
