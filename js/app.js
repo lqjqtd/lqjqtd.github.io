@@ -208,8 +208,10 @@ class AppController {
     };
 
     document.getElementById('btn-crop-prev').onclick = () => { this.state.updateLayoutPositions(); this.fitCamera(); this.setUIMode(UI_MODE.STEP2_GLOBAL); };
-    document.getElementById('btn-crop-save').onclick = async () => {
+
+    const doExport = async (mode) => {
       this.showToast(this.i18n.t("generating"));
+      this._hideExportMenu();
       await new Promise(r => setTimeout(r, 50));
 
       const exportCanvas = document.createElement('canvas');
@@ -237,22 +239,56 @@ class AppController {
       exportCanvas.toBlob(async blob => {
         const filename = `stitched_image_${Date.now()}.png`;
         const file = new File([blob], filename, { type: 'image/png' });
-        if (navigator.canShare && navigator.canShare({ files: [file] })) {
-          try {
-            await navigator.share({ files: [file], title: this.i18n.t('title') });
-            this.showToast(this.i18n.t("downloaded"));
-            return;
-          } catch (e) {
-            if (e.name === 'AbortError') return;
+
+        if (mode === 'share') {
+          if (navigator.canShare && navigator.canShare({ files: [file] })) {
+            try {
+              await navigator.share({ files: [file], title: this.i18n.t('title') });
+              this.showToast(this.i18n.t("shared"));
+              return;
+            } catch (e) {
+              if (e.name === 'AbortError') return;
+            }
           }
+          this.showToast(this.i18n.t("shareNotSupported"));
+          return;
         }
+
         const url = URL.createObjectURL(blob);
         const a = document.createElement('a');
         a.href = url; a.download = filename; a.click();
         URL.revokeObjectURL(url); this.showToast(this.i18n.t("downloaded"));
       }, 'image/png', 1.0);
     };
+
+    document.getElementById('btn-crop-save').onclick = () => doExport('save');
+    document.getElementById('btn-export-share').onclick = () => doExport('share');
+    document.getElementById('btn-export-save').onclick = () => doExport('save');
+
+    const menuToggle = document.getElementById('btn-export-menu-toggle');
+    const exportMenu = document.getElementById('export-menu');
+    menuToggle.onclick = (e) => {
+      e.stopPropagation();
+      const isHidden = exportMenu.classList.contains('hidden');
+      exportMenu.classList.toggle('hidden', !isHidden);
+      exportMenu.classList.toggle('flex', isHidden);
+      menuToggle.setAttribute('aria-expanded', isHidden ? 'true' : 'false');
+    };
+    document.addEventListener('click', () => {
+      exportMenu.classList.add('hidden');
+      exportMenu.classList.remove('flex');
+      menuToggle.setAttribute('aria-expanded', 'false');
+    });
+    exportMenu.addEventListener('click', (e) => e.stopPropagation());
+
     document.getElementById('btn-crop-restart').onclick = () => this.setUIMode(UI_MODE.STEP1);
+  }
+
+  _hideExportMenu() {
+    const menu = document.getElementById('export-menu');
+    const toggle = document.getElementById('btn-export-menu-toggle');
+    if (menu) { menu.classList.add('hidden'); menu.classList.remove('flex'); }
+    if (toggle) toggle.setAttribute('aria-expanded', 'false');
   }
 
   loop() {
