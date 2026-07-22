@@ -38,10 +38,10 @@
     <canvas id="main-canvas" class="w-full h-full block"></canvas>
   </div>
 
-  <div class="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 w-[min(350px,calc(100vw-2rem))]" style="bottom: calc(1.5rem + env(safe-area-inset-bottom));">
-    <div id="ui-step1-floating" class="bg-white/80 dark:bg-gray-900/80 backdrop-blur-md px-4 py-2 rounded-full shadow-lg border border-gray-200/50 dark:border-gray-800/50 flex items-center justify-between hidden">
+  <div class="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 max-w-[calc(100vw-2rem)]" style="bottom: calc(1.5rem + env(safe-area-inset-bottom));">
+    <div id="ui-step1-floating" class="bg-white/80 dark:bg-gray-900/80 backdrop-blur-md px-4 py-2 rounded-full shadow-lg border border-gray-200/50 dark:border-gray-800/50 flex items-center gap-3 hidden">
       <button class="btn btn-secondary" id="btn-clear-all" data-i18n="clear" disabled></button>
-      <label class="flex items-center gap-2 cursor-pointer group whitespace-nowrap">
+      <label class="flex items-center gap-2 cursor-pointer group" style="white-space: nowrap;">
         <div class="relative flex items-center">
           <input type="checkbox" id="direction-toggle" class="sr-only peer">
           <div class="w-10 h-5 bg-gray-300 dark:bg-gray-600 rounded-full peer-checked:bg-blue-500 transition-colors"></div>
@@ -52,15 +52,15 @@
       <button class="btn btn-primary" id="btn-next-1" data-i18n="nextStep" disabled></button>
     </div>
 
-    <div id="ui-step2-global" class="bg-white/80 dark:bg-gray-900/80 backdrop-blur-md px-4 py-2 rounded-full shadow-lg border border-gray-200/50 dark:border-gray-800/50 flex items-center justify-between hidden">
+    <div id="ui-step2-global" class="bg-white/80 dark:bg-gray-900/80 backdrop-blur-md px-4 py-2 rounded-full shadow-lg border border-gray-200/50 dark:border-gray-800/50 flex items-center gap-3 hidden">
       <button class="btn btn-secondary" id="btn-global-prev" data-i18n="prevStep"></button>
-      <span class="text-[12px] text-gray-500 dark:text-gray-300 whitespace-nowrap" data-i18n="clickSeam"></span>
+      <span class="text-[12px] text-gray-500 dark:text-gray-300" style="white-space: nowrap;" data-i18n="clickSeam"></span>
       <button class="btn btn-primary" id="btn-global-next" data-i18n="nextStep"></button>
     </div>
 
-    <div id="ui-step2-seam" class="bg-white/80 dark:bg-gray-900/80 backdrop-blur-md px-4 py-2 rounded-full shadow-lg border border-gray-200/50 dark:border-gray-800/50 flex items-center justify-between hidden">
+    <div id="ui-step2-seam" class="bg-white/80 dark:bg-gray-900/80 backdrop-blur-md px-4 py-2 rounded-full shadow-lg border border-gray-200/50 dark:border-gray-800/50 flex items-center gap-3 hidden">
       <button class="btn btn-secondary" id="btn-seam-cancel" data-i18n="cancel"></button>
-      <label class="flex items-center gap-2 cursor-pointer group whitespace-nowrap">
+      <label class="flex items-center gap-2 cursor-pointer group" style="white-space: nowrap;">
         <div class="relative flex items-center">
           <input type="checkbox" id="seam-mode-toggle" class="sr-only peer">
           <div class="w-10 h-5 bg-gray-300 dark:bg-gray-600 rounded-full peer-checked:bg-blue-500 transition-colors"></div>
@@ -71,7 +71,7 @@
       <button class="btn btn-primary" id="btn-seam-confirm" data-i18n="done"></button>
     </div>
 
-    <div id="ui-step3-crop" class="bg-white/80 dark:bg-gray-900/80 backdrop-blur-md px-4 py-2 rounded-full shadow-lg border border-gray-200/50 dark:border-gray-800/50 flex items-center justify-between hidden">
+    <div id="ui-step3-crop" class="bg-white/80 dark:bg-gray-900/80 backdrop-blur-md px-4 py-2 rounded-full shadow-lg border border-gray-200/50 dark:border-gray-800/50 flex items-center gap-3 hidden">
       <button class="btn btn-secondary" id="btn-crop-prev" data-i18n="prevStep"></button>
       <button class="btn btn-secondary" id="btn-crop-restart" data-i18n="restart"></button>
       <button class="btn btn-primary" id="btn-crop-save" data-i18n="export"></button>
