@@ -47,6 +47,11 @@
 
   .w-full { width: 100%; }
   .h-full { height: 100%; }
+  .w-10 { width: 2.5rem; }
+  .h-5 { height: 1.25rem; }
+  .w-4 { width: 1rem; }
+  .h-4 { height: 1rem; }
+  .left-0\.5 { left: 0.125rem; }
   .max-w-\[calc\(100vw-2rem\)\] { max-width: calc(100vw - 2rem); }
 
   .p-4 { padding: 1rem; }
