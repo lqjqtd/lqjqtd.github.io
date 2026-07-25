@@ -1,10 +1,11 @@
-﻿const VERSION = '20260723062930';
+﻿const VERSION = '20260725092159';
 const CACHE_NAME = 'site-cache-v' + VERSION;
 
 // 核心资产：包含你的模块化 JS 文件
 const ASSETS = [
   './',
   './css/styles.css',
+  './css/tailwind.css',
   './js/app.js',
   './js/modules/state.js',
   './js/modules/i18n.js',

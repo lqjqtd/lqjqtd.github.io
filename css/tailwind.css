@@ -1,0 +1,150 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  *, ::before, ::after { box-sizing: border-box; }
+}
+
+@layer utilities {
+  .bg-gray-50 { background-color: rgb(249 250 251); }
+  .text-gray-900 { color: rgb(17 24 39); }
+  .bg-gray-900 { background-color: rgb(17 24 39); }
+  .text-white { color: rgb(255 255 255); }
+  .bg-blue-500 { background-color: rgb(59 130 246); }
+  .text-gray-500 { color: rgb(107 114 128); }
+  .text-gray-700 { color: rgb(55 65 81); }
+  .text-gray-300 { color: rgb(209 213 219); }
+  .bg-gray-300 { background-color: rgb(209 213 219); }
+  .bg-gray-600 { background-color: rgb(75 85 99); }
+  .bg-gray-100 { background-color: rgb(243 244 246); }
+  .bg-gray-950 { background-color: rgb(3 7 18); }
+  .bg-white { background-color: rgb(255 255 255); }
+  .bg-red-500 { background-color: rgb(239 68 68); }
+  .hover\:bg-blue-600:hover { background-color: rgb(37 99 235); }
+  .hover\:bg-gray-100:hover { background-color: rgb(243 244 246); }
+  .hover\:bg-gray-700:hover { background-color: rgb(55 65 81); }
+  .hover\:bg-red-600:hover { background-color: rgb(220 38 38); }
+
+  .dark\:bg-\[\#121212\] { background-color: #121212; }
+  .dark\:text-white { color: rgb(255 255 255); }
+  .dark\:border-gray-700 { border-color: rgb(55 65 81); }
+  .dark\:border-gray-800 { border-color: rgb(31 41 55); }
+  .dark\:bg-gray-900\/80 { background-color: rgb(17 24 39 / 0.8); }
+  .dark\:border-gray-800\/50 { border-color: rgb(31 41 55 / 0.5); }
+  .dark\:text-gray-200 { color: rgb(229 231 235); }
+  .dark\:text-gray-300 { color: rgb(209 213 219); }
+  .dark\:bg-gray-700 { background-color: rgb(55 65 81); }
+
+  .flex { display: flex; }
+  .flex-col { flex-direction: column; }
+  .flex-grow { flex-grow: 1; }
+  .shrink-0 { flex-shrink: 0; }
+  .items-center { align-items: center; }
+  .justify-center { justify-content: center; }
+  .content-start { align-content: flex-start; }
+  .justify-between { justify-content: space-between; }
+
+  .w-full { width: 100%; }
+  .h-full { height: 100%; }
+  .max-w-\[calc\(100vw-2rem\)\] { max-width: calc(100vw - 2rem); }
+
+  .p-4 { padding: 1rem; }
+  .p-6 { padding: 1.5rem; }
+  .px-4 { padding-left: 1rem; padding-right: 1rem; }
+  .py-2 { padding-top: 0.5rem; padding-bottom: 0.5rem; }
+  .py-3 { padding-top: 0.75rem; padding-bottom: 0.75rem; }
+  .px-6 { padding-left: 1.5rem; padding-right: 1.5rem; }
+  .mb-2 { margin-bottom: 0.5rem; }
+  .mb-4 { margin-bottom: 1rem; }
+  .mb-6 { margin-bottom: 1.5rem; }
+  .mt-2 { margin-top: 0.5rem; }
+
+  .gap-4 { gap: 1rem; }
+  .gap-3 { gap: 0.75rem; }
+  .gap-2 { gap: 0.5rem; }
+
+  .relative { position: relative; }
+  .absolute { position: absolute; }
+  .fixed { position: fixed; }
+  .inset-0 { inset: 0; }
+  .top-0 { top: 0; }
+  .left-0 { left: 0; }
+  .bottom-6 { bottom: 1.5rem; }
+  .left-1\/2 { left: 50%; }
+  .-translate-x-1\/2 { transform: translateX(-50%); }
+  .translate-x-5 { transform: translateX(1.25rem); }
+
+  .border-2 { border-width: 2px; }
+  .border { border-width: 1px; }
+  .border-dashed { border-style: dashed; }
+  .border-gray-300 { border-color: rgb(209 213 219); }
+  .border-gray-200\/50 { border-color: rgb(229 231 235 / 0.5); }
+
+  .rounded-2xl { border-radius: 1rem; }
+  .rounded-full { border-radius: 9999px; }
+  .rounded-lg { border-radius: 0.5rem; }
+
+  .overflow-y-auto { overflow-y: auto; }
+  .overflow-hidden { overflow: hidden; }
+
+  .hidden { display: none; }
+  .block { display: block; }
+  .inline-block { display: inline-block; }
+  .inline-flex { display: inline-flex; }
+
+  .grid { display: grid; }
+  .grid-cols-2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+
+  .pointer-events-none { pointer-events: none; }
+  .pointer-events-auto { pointer-events: auto; }
+
+  .z-50 { z-index: 50; }
+  .z-100 { z-index: 100; }
+  .z-10 { z-index: 10; }
+  .z-0 { z-index: 0; }
+
+  .backdrop-blur-md { backdrop-filter: blur(12px); }
+
+  .shadow-lg { box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1); }
+  .shadow-xl { box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1); }
+  .shadow-md { box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1); }
+
+  .select-none { user-select: none; }
+  .leading-none { line-height: 1; }
+
+  .text-center { text-align: center; }
+  .text-2xl { font-size: 1.5rem; line-height: 2rem; }
+  .text-3xl { font-size: 1.875rem; line-height: 2.25rem; }
+  .text-4xl { font-size: 2.25rem; line-height: 2.5rem; }
+  .text-5xl { font-size: 3rem; line-height: 1; }
+  .text-lg { font-size: 1.125rem; line-height: 1.75rem; }
+  .text-base { font-size: 1rem; line-height: 1.5rem; }
+  .text-sm { font-size: 0.875rem; line-height: 1.25rem; }
+  .text-xs { font-size: 0.75rem; line-height: 1rem; }
+
+  .font-bold { font-weight: 700; }
+  .font-medium { font-weight: 500; }
+
+  .transition-colors { transition-property: color, background-color, border-color, text-decoration-color, fill, stroke; transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1); transition-duration: 150ms; }
+  .transition-transform { transition-property: transform; transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1); transition-duration: 150ms; }
+  .transition-all { transition-property: all; transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1); transition-duration: 150ms; }
+
+  .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border-width: 0; }
+
+  .peer-checked\:bg-blue-500:checked { background-color: rgb(59 130 246); }
+  .peer-checked\:translate-x-5:checked { transform: translateX(1.25rem); }
+
+  @media (min-width: 640px) {
+    .sm\:p-6 { padding: 1.5rem; }
+    .sm\:mb-6 { margin-bottom: 1.5rem; }
+    .sm\:text-3xl { font-size: 1.875rem; line-height: 2.25rem; }
+    .sm\:grid-cols-3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  }
+  @media (min-width: 768px) {
+    .md\:grid-cols-4 { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+  }
+  @media (min-width: 1024px) {
+    .lg\:grid-cols-6 { grid-template-columns: repeat(6, minmax(0, 1fr)); }
+  }
+}
