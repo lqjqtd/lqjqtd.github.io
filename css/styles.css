@@ -216,6 +216,12 @@ body {
   }
 }
 
+.floating-label {
+  font-size: 12px !important;
+  line-height: 1 !important;
+  white-space: nowrap !important;
+}
+
 .toast {
   position: absolute;
   top: 2rem;

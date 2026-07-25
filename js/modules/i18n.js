@@ -3,7 +3,7 @@ export class I18nModule {
     this.lang = navigator.language.startsWith('zh') ? 'zh' : 'en';
     this.data = {
       "zh": {
-        "title": "简单拼图",
+        "title": "索的拼图",
         "vertical": "纵向拼接",
         "horizontal": "横向拼接",
         "emptyTitle": "添加图片以开始",
