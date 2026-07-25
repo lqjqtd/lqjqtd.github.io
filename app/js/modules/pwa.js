@@ -30,11 +30,19 @@ export class PWAModule {
     });
 
     btn.addEventListener('click', async () => {
-      if (!this.deferredPrompt) return;
-      this.deferredPrompt.prompt();
-      const choice = await this.deferredPrompt.userChoice;
-      if (choice.outcome === 'accepted') {
-        btn.classList.add('hidden');
+      if (!this.deferredPrompt) {
+        this.app.showToast(this.app.i18n.t('install') + ': 请通过浏览器菜单添加到主屏幕');
+        return;
+      }
+      btn.classList.add('hidden');
+      try {
+        this.deferredPrompt.prompt();
+        const choice = await this.deferredPrompt.userChoice;
+        if (choice.outcome === 'accepted') {
+          this.app.showToast(this.app.i18n.t('title') + ' 已添加到桌面');
+        }
+      } catch (e) {
+        this.app.showToast(this.app.i18n.t('install') + ': 请通过浏览器菜单添加到主屏幕');
       }
       this.deferredPrompt = null;
     });
