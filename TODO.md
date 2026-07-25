@@ -1,8 +1,43 @@
-# 简单拼图 - 开发日志
+# 索的拼图 - 开发日志
 
-## 2026-07-23 工作记录
+## 2026-07-25 工作记录
 
 ### 已完成
+
+#### 修复与优化
+1. **字体大小问题修复**
+   - `html { font-size: 18px; }` → `16px`，解决按钮中间提示文字变大挤走下一步按钮的问题
+   - 添加 `floating-label` CSS 类强制提示文字样式（12px、不换行）
+
+2. **应用名称变更**
+   - 从"简单拼图"改为"索的拼图"
+   - 更新 `index.html`、`i18n.js`、`README.md` 中的标题
+
+3. **开关控件可见性修复**
+   - 在 `tailwind.css` 中添加缺失的 Tailwind 类：`.w-10`、`.h-5`、`.w-4`、`.h-4`、`.left-0.5`
+   - 修复"纵向拼接"前面的开关按钮不可见问题
+
+4. **文本优化**
+   - "点击高亮微调接缝" → "点击红线微调"（更直观描述接缝显示方式）
+   - 英文同步更新："Tap seam to tune" → "Tap red line to tune"
+
+5. **安装按钮行为优化**
+   - 点击后立即隐藏按钮，避免静默失败时按钮一直显示
+   - 添加 `try-catch` 捕获 `prompt()` 失败
+   - 失败时显示 Toast 引导用户通过浏览器菜单手动添加到主屏幕
+
+6. **Service Worker 版本管理**
+   - 每次修改后手动递增 VERSION 常量，确保缓存更新
+
+7. **部署文档**
+   - 整理群辉 NAS Web Station 部署指南
+   - 强调 HTTPS 是 PWA 功能正常工作的前提
+
+---
+
+### 2026-07-23 工作记录
+
+#### 已完成
 
 #### P0 - 安卓移动端核心优化
 1. **视口与安全区适配**
@@ -43,7 +78,6 @@
 
 #### UI 调整
 - 去掉顶部 github / 个人主页链接
-- 基础字号 16px → 18px
 - 浮动面板从 `justify-between` 改为 `gap-3` 紧凑布局
 - 按钮高度固定 20px（约 1.2cm），字体 12px
 - 方向/接缝提示文字与按钮文字统一 12px
@@ -103,20 +137,26 @@
 
 ### 已知浏览器兼容性
 
-| 功能 | Chrome | 夸克 | 小米浏览器 | UC |
-|---|---|---|---|---|
-| Web Share API | ✅ | ✅ | ❌ | ❓ |
-| Clipboard API (图片) | ✅ | ❓ | ❓ | ❓ |
-| beforeinstallprompt | ✅ | ❌ | ❌ | ❌ |
-| importmap | ✅ | ✅ | ❌ | ❓ |
-| createImageBitmap | ✅ | ✅ | ✅ | ✅ |
+| 功能 | Chrome | 夸克 | 小米浏览器 | UC | 华为浏览器 |
+|---|---|---|---|---|---|
+| Web Share API | ✅ | ✅ | ❌ | ❓ | ❓ |
+| Clipboard API (图片) | ✅ | ❓ | ❓ | ❓ | ❓ |
+| beforeinstallprompt | ✅ | ❌ | ❌ | ❌ | ✅（显示按钮但 prompt 可能失败） |
+| importmap | ✅ | ✅ | ❌ | ❓ | ❓ |
+| createImageBitmap | ✅ | ✅ | ✅ | ✅ | ✅ |
+| 本地 CSS 样式 | ✅ | ✅ | ✅ | ✅ | ✅ |
 
 ---
 
-### 仓库同步说明
+### 部署说明
 
-- 源项目：`c:\code\simple-image-stitcher\app\`
-- 部署仓库：`c:\code\lqjqtd.github.io\`
-- 部署方式：`app/` 下文件平铺到仓库根目录
-- `sw.js` 中的 `BUILD_TIME_PLACEHOLDER` 在部署时替换为时间戳
+#### GitHub Pages
 - 远程仓库：https://github.com/lqjqtd/lqjqtd.github.io
+- 部署方式：GitHub Actions 自动将 `app/` 目录部署到 Pages
+- `sw.js` 中的 `BUILD_TIME_PLACEHOLDER` 在构建时替换为时间戳
+
+#### 群辉 NAS (Web Station)
+- 部署路径：将 `app/` 目录内容复制到 Web Station 文档根目录下（如 `/volume1/web/stitcher/`）
+- **必须配置 HTTPS**：PWA 功能（Service Worker、离线模式、安装提示）需要 HTTPS
+- 手动更新时需修改 `sw.js` 的 `VERSION` 常量触发缓存更新
+- 排除文件：不要上传 `_tmp_sw.js`
