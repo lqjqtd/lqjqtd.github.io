@@ -1,0 +1,108 @@
+export class PWAModule {
+  constructor(app) {
+    this.app = app;
+    this.manifestLink = document.createElement('link');
+    this.manifestLink.rel = 'manifest';
+    document.head.appendChild(this.manifestLink);
+
+    this.lastManifestUrl = null;
+    this.updateManifest();
+
+    if (window.matchMedia) {
+      window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => {
+        this.updateManifest();
+      });
+    }
+
+    this.initSW();
+    this.initInstallPrompt();
+  }
+
+  initInstallPrompt() {
+    this.deferredPrompt = null;
+    const btn = document.getElementById('btn-install');
+    if (!btn) return;
+
+    window.addEventListener('beforeinstallprompt', (e) => {
+      e.preventDefault();
+      this.deferredPrompt = e;
+      btn.classList.remove('hidden');
+    });
+
+    btn.addEventListener('click', async () => {
+      if (!this.deferredPrompt) return;
+      this.deferredPrompt.prompt();
+      const choice = await this.deferredPrompt.userChoice;
+      if (choice.outcome === 'accepted') {
+        btn.classList.add('hidden');
+      }
+      this.deferredPrompt = null;
+    });
+
+    window.addEventListener('appinstalled', () => {
+      btn.classList.add('hidden');
+      this.deferredPrompt = null;
+    });
+  }
+
+  updateManifest() {
+    const mainUrl = location.href.split('?')[0].split('#')[0];
+    const isDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+
+    const COLOR_LIGHT = '#f9fafb';
+    const COLOR_DARK = '#121212';
+    const bgColor = isDark ? COLOR_DARK : COLOR_LIGHT;
+    const iconColor = isDark ? COLOR_LIGHT : COLOR_DARK;
+
+    const iconUrl = new URL('./favicon.svg', location.href).href;
+
+    const manifest = {
+      name: this.app.i18n.t('title'),
+      short_name: this.app.i18n.t('title'),
+      description: this.app.i18n.t('desc'),
+      scope: mainUrl,
+      start_url: mainUrl,
+      display: "standalone",
+      background_color: bgColor,
+      theme_color: bgColor,
+      icons: [{
+        src: iconUrl,
+        sizes: "any 512x512 192x192",
+        type: "image/svg+xml",
+        purpose: "any maskable"
+      }]
+    };
+
+    if (this.lastManifestUrl) {
+      URL.revokeObjectURL(this.lastManifestUrl);
+    }
+    this.lastManifestUrl = URL.createObjectURL(new Blob([JSON.stringify(manifest)], { type: 'application/manifest+json' }));
+    this.manifestLink.href = this.lastManifestUrl;
+  }
+
+  initSW() {
+    if ('serviceWorker' in navigator && location.protocol.startsWith('http')) {
+      navigator.serviceWorker.register('./sw.js').then(reg => {
+        reg.addEventListener('updatefound', () => {
+          const newSW = reg.installing;
+          newSW.addEventListener('statechange', () => {
+            if (newSW.state === 'installed' && navigator.serviceWorker.controller) {
+              this.app.showToast(this.app.i18n.t('updateAvailable'), 6000);
+              const toast = document.getElementById('toast');
+              if (toast) {
+                toast.style.cursor = 'pointer';
+                toast.onclick = () => {
+                  newSW.postMessage({ type: 'SKIP_WAITING' });
+                  location.reload();
+                };
+              }
+            }
+          });
+        });
+        setInterval(() => reg.update(), 60 * 60 * 1000);
+      }).catch(err => {
+        console.log('SW registration failed:', err);
+      });
+    }
+  }
+}
