@@ -1,4 +1,4 @@
-const VERSION = '20260725_3';
+const VERSION = '20260811_1';
 const CACHE_NAME = 'site-cache-v' + VERSION;
 
 // 核心资产：包含你的模块化 JS 文件
