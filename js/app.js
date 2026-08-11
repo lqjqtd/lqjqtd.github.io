@@ -167,6 +167,8 @@ class AppController {
         this.state.direction = e.target.checked ? 'horizontal' : 'vertical';
         dirText.textContent = e.target.checked ? this.i18n.t('horizontal') : this.i18n.t('vertical');
       });
+      // 同步复选框状态与当前方向
+      dirToggle.checked = this.state.direction === 'horizontal';
     }
 
     document.getElementById('btn-next-1').onclick = () => {
